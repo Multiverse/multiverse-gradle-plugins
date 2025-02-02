@@ -1,0 +1,16 @@
+plugins {
+    id 'org.mvplugins.bukkit-plugin'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    doFirst {
+        configure(options) {
+            options.compilerArgs << "-Aorg.glassfish.hk2.metadata.location=META-INF/hk2-locator/${project.description}".toString()
+        }
+    }
+}
+
+dependencies {
+    annotationProcessor 'org.glassfish.hk2:hk2-metadata-generator:3.0.3'
+    testAnnotationProcessor 'org.glassfish.hk2:hk2-metadata-generator:3.0.3'
+}

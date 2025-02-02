@@ -1,0 +1,36 @@
+plugins {
+    id 'org.mvplugins.bukkit-plugin'
+    id 'org.mvplugins.hk2'
+    id 'org.mvplugins.multiverse-maven-publish'
+}
+
+version = System.getenv('GITHUB_VERSION') ?: 'local'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+
+    maven {
+        url = uri('https://repo.onarandombox.com/content/groups/public')
+    }
+
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/groups/public/')
+    }
+
+    maven {
+        url = uri('https://jitpack.io')
+    }
+
+    maven {
+        url = uri('https://repo.minebench.de/')
+    }
+
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}

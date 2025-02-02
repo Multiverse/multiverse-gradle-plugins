@@ -1,0 +1,101 @@
+plugins {
+    id 'java-library'
+    id 'com.gradleup.shadow'
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    def props = [version: "${project.version}"]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+
+    // This task should never be skipped. The tests depend on this having been run but we want the new version number
+    // that is created after tests are run and before we run again to publish.
+    outputs.upToDateWhen { false }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compileClasspath
+}
+
+configurations {
+    // Add configuration for server API
+    compileOnly.extendsFrom serverApi
+    runtimeClasspath.extendsFrom serverApi
+
+    // Add configuration for external plugins
+    implementation.extendsFrom externalPlugin
+
+    // Add configuration for dependencies that will be included in fat jar
+    compileClasspath.extendsFrom shadowed
+    testCompileClasspath.extendsFrom shadowed
+    testRuntimeClasspath.extendsFrom shadowed
+
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(shadowJar)
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowed]
+
+    archiveClassifier.set('')
+}
+
+build.dependsOn shadowJar
+jar.enabled = false
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+interface ApiDependenciesExtension {
+    Property<String> getServerApiVersion()
+    Property<String> getMockBukkitServerApiVersion()
+    Property<String> getMockBukkitVersion()
+}
+
+def apiDependenciesExtension = project.extensions.create('apiDependencies', ApiDependenciesExtension)
+
+apiDependenciesExtension.mockBukkitVersion.convention('4.30.0')
+
+afterEvaluate {
+    dependencies {
+        serverApi "org.spigotmc:spigot-api:${apiDependenciesExtension.serverApiVersion.get()}"
+
+        testImplementation "org.mockbukkit.mockbukkit:mockbukkit-v${apiDependenciesExtension.mockBukkitServerApiVersion.get()}:${apiDependenciesExtension.mockBukkitVersion.get()}"
+    }
+
+    project.configurations.api.canBeResolved = true
+}
