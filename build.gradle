@@ -4,7 +4,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "2.0.21"
 }
 
-group = 'org.mvplugins'
+group = 'org.mvplugins.gradle'
 version = System.getenv('GITHUB_VERSION') ?: '0.0.0-SNAPSHOT'
 
 repositories {
