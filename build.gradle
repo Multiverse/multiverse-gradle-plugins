@@ -1,0 +1,30 @@
+plugins {
+    id 'groovy-gradle-plugin'
+    id 'maven-publish'
+    id "org.jetbrains.kotlin.jvm" version "2.0.21"
+}
+
+group = 'org.mvplugins.gradle'
+version = System.getenv('GITHUB_VERSION') ?: '0.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:8.3.5'
+    implementation 'org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:2.0.21'
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "multiverse"
+            def releasesRepoUrl = "https://repo.onarandombox.com/multiverse-releases"
+            def snapshotsRepoUrl = "https://repo.onarandombox.com/multiverse-snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials(PasswordCredentials)
+        }
+    }
+}

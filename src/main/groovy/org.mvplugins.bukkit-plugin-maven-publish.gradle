@@ -1,0 +1,39 @@
+plugins {
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom.withXml {
+                Node pomNode = asNode()
+
+                // Remove Kotlin dependency
+                pomNode.dependencies.'*'.findAll() {
+                    it.groupId.text() == 'org.jetbrains.kotlin'
+                }.each() {
+                    it.parent().remove(it)
+                }
+
+                // Switch runtime deps to provided
+                pomNode.dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime'
+                }.each() {
+                    it.scope*.value = 'provided'
+                }
+
+                // Add spigot api to pom
+                project.configurations.serverApi.allDependencies.each { dependency ->
+                    pomNode.dependencies[0].appendNode("dependency").with {
+                        it.appendNode("groupId", dependency.group)
+                        it.appendNode("artifactId", dependency.name)
+                        it.appendNode("version", dependency.version)
+                        it.appendNode("scope", "provided")
+                    }
+                }
+            }
+        }
+    }
+}
