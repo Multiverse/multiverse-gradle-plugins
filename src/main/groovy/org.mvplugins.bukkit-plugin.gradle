@@ -3,6 +3,8 @@ plugins {
     id 'com.gradleup.shadow'
 }
 
+version = System.getenv('GITHUB_VERSION') ?: 'local'
+
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
