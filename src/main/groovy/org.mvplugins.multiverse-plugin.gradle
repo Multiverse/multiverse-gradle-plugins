@@ -4,8 +4,6 @@ plugins {
     id 'org.mvplugins.multiverse-maven-publish'
 }
 
-version = System.getenv('GITHUB_VERSION') ?: 'local'
-
 repositories {
     mavenLocal()
     mavenCentral()
