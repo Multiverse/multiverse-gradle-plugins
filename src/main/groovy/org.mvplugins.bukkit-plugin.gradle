@@ -108,7 +108,7 @@ apiDependenciesExtension.mockBukkitVersion.convention('4.30.0')
 
 afterEvaluate {
     dependencies {
-        serverApi "org.spigotmc:spigot-api:${apiDependenciesExtension.serverApiVersion.get()}"
+        serverApi "io.papermc.paper:paper-api:${apiDependenciesExtension.serverApiVersion.get()}"
 
         testImplementation "org.mockbukkit.mockbukkit:mockbukkit-v${apiDependenciesExtension.mockBukkitServerApiVersion.get()}:${apiDependenciesExtension.mockBukkitVersion.get()}"
     }
