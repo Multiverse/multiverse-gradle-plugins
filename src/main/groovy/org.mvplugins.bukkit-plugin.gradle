@@ -5,6 +5,10 @@ plugins {
 
 version = System.getenv('GITHUB_VERSION') ?: 'local'
 
+java {
+    disableAutoTargetJvm()
+}
+
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
