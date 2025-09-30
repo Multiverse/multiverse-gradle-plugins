@@ -54,6 +54,7 @@ configurations {
     // Add configuration for server API
     compileOnly.extendsFrom serverApi
     runtimeClasspath.extendsFrom serverApi
+    testImplementation.extendsFrom serverApi
 
     // Add configuration for external plugins
     implementation.extendsFrom externalPlugin
